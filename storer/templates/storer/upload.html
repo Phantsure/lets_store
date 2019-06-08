@@ -1,0 +1,6 @@
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" id="id_file" name="file" required>
+    <label for="id_file">Choose file</label>
+    <button type="submit" >Upload</button>
+</form>
