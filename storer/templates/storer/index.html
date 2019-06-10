@@ -2,5 +2,5 @@
     <button name="uploadButton" value=1 type="submit" >UPLOAD</button><br>
     <button name="updateButton" value=1 type="submit" >UPDATE</button><br>
     <button name="deleteButton" value=1 type="submit" >DELETE</button><br>
-    <button name="downloadButton" value=1 type="submit" >DOWNLOAD</button>
+    <button name="downloadButton" value=1 type="submit" disabled><a href="{% url 'storer:download' %}">DOWNLOAD</a></button>
 </form>

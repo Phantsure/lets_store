@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from urllib.request import urlopen, Request
-from time import ctime
+from time import ctime, sleep
 
 from .secret import access_key
 from .functions import handle_uploaded_file
@@ -51,6 +51,8 @@ def update(request):
             a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="PUT")
             urlopen(a)
         return HttpResponse("updated")
+        # sleep(5)
+        # return HttpResponseRedirect(reverse('storer:index'))
     else:
         return render(request,'storer/upload.html')
 
@@ -59,7 +61,7 @@ def delete(request):
     data = '{"branch": "master", "commit_message": '+ commit_message +'}'
     a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="DELETE")
     urlopen(a)
-    return HttpResponse("file is deleted")
+    return HttpResponse("deleted")
 
 def download(request):
     a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt/raw?ref=master", headers={"Authorization": access_key}, method="GET")

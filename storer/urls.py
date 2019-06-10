@@ -8,5 +8,5 @@ urlpatterns = [
     path('upload/', views.upload, name='upload'),
     path('update/', views.update, name='update'),
     path('delete/', views.delete, name='delete'),
-    path('download/', views.download, name='download'),
+    path('download/file.txt', views.download, name='download'),
 ]
