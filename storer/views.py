@@ -33,7 +33,7 @@ def upload(request):
             print(data.encode())
             a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="POST")
             urlopen(a)
-        return HttpResponse("uploaded")
+        return render(request, 'storer/status_upd.html', {'text':'Uploaded'})
     else:
         return render(request, 'storer/upload.html')
 
@@ -50,7 +50,7 @@ def update(request):
             print(data.encode())
             a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="PUT")
             urlopen(a)
-        return HttpResponse("updated")
+        return render(request, 'storer/status_upd.html', {'text':'Updated'})
         # sleep(5)
         # return HttpResponseRedirect(reverse('storer:index'))
     else:
@@ -61,7 +61,7 @@ def delete(request):
     data = '{"branch": "master", "commit_message": '+ commit_message +'}'
     a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="DELETE")
     urlopen(a)
-    return HttpResponse("deleted")
+    return render(request, 'storer/status_upd.html', {'text':'Deleted'})
 
 def download(request):
     a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt/raw?ref=master", headers={"Authorization": access_key}, method="GET")
