@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from urllib.request import urlopen, Request
-from time import ctime, sleep
+from time import ctime
 
 from .secret import access_key
 from .functions import handle_uploaded_file
@@ -51,8 +51,6 @@ def update(request):
             a = Request("https://gitlab.com/api/v4/projects/12659010/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="PUT")
             urlopen(a)
         return render(request, 'storer/status_upd.html', {'text':'Updated'})
-        # sleep(5)
-        # return HttpResponseRedirect(reverse('storer:index'))
     else:
         return render(request,'storer/upload.html')
 
