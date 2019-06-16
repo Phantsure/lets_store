@@ -2,16 +2,15 @@ import sys
 from time import ctime
 from urllib.request import Request, urlopen
 
-from storer.secret import project_id, access_key
+from storer.secret import project_id, access_token
 
 def main():
-    print(sys.argv)
+    # print(sys.argv)
 
     l = len(sys.argv) 
-    if l == 0:
+    if l == 1:
         print("use --help to get help")
-
-    if sys.argv[1] == '--upload':
+    elif sys.argv[1] == '--upload':
         if l == 3:
             upload(sys.argv[2])
     elif sys.argv[1] == '--update':
@@ -34,11 +33,11 @@ def upload(file):
     with open(file, 'rb+') as f:
         content = '"{}"'.format(f.read())
         commit_message = '"Uploaded on {}"'.format(ctime())
-        print(content)
-        print(content.encode())
+        # print(content)
+        # print(content.encode())
         data = '{"branch": "master", "content": ' + content + ', "commit_message": '+ commit_message +'}'
-        print(data.encode())
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="POST")
+        # print(data.encode())
+        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="POST")
         urlopen(a)
     print('uploaded')
     return
@@ -47,11 +46,11 @@ def update(file):
     with open(file, 'rb+') as f:
         content = '"{}"'.format(f.read())
         commit_message = '"Updated on {}"'.format(ctime())
-        print(content)
-        print(content.encode())
+        # print(content)
+        # print(content.encode())
         data = '{"branch": "master", "content": ' + content + ', "commit_message": '+ commit_message +'}'
-        print(data.encode())
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="PUT")
+        # print(data.encode())
+        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="PUT")
         urlopen(a)
     print("updated")
     return
@@ -59,12 +58,12 @@ def update(file):
 def delete():
     commit_message = '"Deleted on {}"'.format(ctime())
     data = '{"branch": "master", "commit_message": '+ commit_message +'}'
-    a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Authorization": access_key, "Content-Type": "application/json"}, method="DELETE")
+    a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
     urlopen(a)
     print("deleted")
 
 def download(file):
-    a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt/raw?ref=master", headers={"Authorization": access_key}, method="GET")
+    a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt/raw?ref=master", headers={"Private-Token": access_token}, method="GET")
     u = urlopen(a)
     with open(file, 'wb+') as f:
         f.write(u.read())
