@@ -64,23 +64,23 @@ def files(request):
     f = urlopen(a)
     import json
     file = json.loads(f.read().decode())
-    print(type(file[0]))
+    # print(type(file[0]))
     file_names = []
     for fil in file:
-        print(fil['name'])
+        # print(fil['name'])
         file_names.append(fil['name'])
     commit_messages = []
     for name in file_names:
         a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name + "?ref=master", headers={"Private-Token": access_token}, method="GET")
         f = urlopen(a)
         file_details = json.loads(f.read().decode())
-        print(file_details)
+        # print(file_details)
         last_commit_id = file_details['last_commit_id']
         a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/commits/" + last_commit_id, headers={"Private-Token": access_token}, method="GET")
         f = urlopen(a)
         commit = json.loads(f.read().decode())
         commit_messages.append(commit['message'])
-    print(commit_messages)
+    # print(commit_messages)
     number_of_files = range(len(file_names))
     return render(request, 'storer/files.html', {'file_names':file_names, 'commit_messages':commit_messages, 'number_of_files':number_of_files})
 
