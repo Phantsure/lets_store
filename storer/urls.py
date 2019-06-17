@@ -7,6 +7,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('upload/', views.upload, name='upload'),
     path('update/', views.update, name='update'),
-    path('delete/', views.delete, name='delete'),
-    path('download/file.txt', views.download, name='download'),
+    path('delete/<str:filename>', views.delete, name='delete'),
+    path('download/<str:filename>', views.download, name='download'),
+    path('files/', views.files, name='files'),
+    path('details/<str:filename>', views.file_details, name='details'),
 ]
