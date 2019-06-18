@@ -26,6 +26,7 @@ def upload(request):
     if request.method == 'POST' and request.FILES:
         f = request.FILES['file']
         name = f.name
+        # print(name) # uncomment this statement if bad request 400 occur when uploading
         handle_uploaded_file(f)
         with open('storer/upload/file.txt', 'rb+') as f:
             content = '"{}"'.format(f.read())
