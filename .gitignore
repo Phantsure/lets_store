@@ -6,3 +6,8 @@ storer/upload/*
 
 # access_key
 storer/secret.py
+
+# pyc files
+storer/__pycache__/*
+storer/migrations/__pycache__/*
+storer/templatetags/__pycache/*
