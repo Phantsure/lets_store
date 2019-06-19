@@ -26,9 +26,9 @@ def upload(request):
     if request.method == 'POST' and request.FILES:
         f = request.FILES['file']
         name = f.name
-        # print(name) # uncomment this statement if bad request 400 occur when uploading
+        print(name) # uncomment this statement if bad request 400 occur when uploading
         handle_uploaded_file(f)
-        with open('storer/upload/file.txt', 'rb+') as f:
+        with open('storer/upload/file', 'rb+') as f:
             content = '"{}"'.format(f.read())
             commit_message = '"Uploaded on {}"'.format(ctime())
             # print(content)
@@ -47,7 +47,7 @@ def update(request):
         name = f.name
         # print(name)
         handle_uploaded_file(f)
-        with open('storer/upload/file.txt', 'rb+') as f:
+        with open('storer/upload/file', 'rb+') as f:
             content = '"{}"'.format(f.read())
             commit_message = '"Updated on {}"'.format(ctime())
             # print(content)

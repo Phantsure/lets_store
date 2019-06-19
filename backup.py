@@ -19,10 +19,10 @@ def auto_backup():
             with open('<LOCATION>', 'rb+') as f:
                 content = '"{}"'.format(f.read())
                 commit_message = '"Updated on {}"'.format(ctime())
-                print(content)
-                print(content.encode())
+                # print(content)
+                # print(content.encode())
                 data = '{"branch": "master", "content": ' + content + ', "commit_message": '+ commit_message +'}'
-                print(data.encode())
+                # print(data.encode())
                 a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/file%2Etxt", data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="PUT")
                 h = urlopen(a)
                 print(h.code)
