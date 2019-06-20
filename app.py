@@ -39,7 +39,7 @@ def upload(file):
         commit_message = "Uploaded on {}".format(ctime())
         print(content)
         print(content.encode())
-        headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+        headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
         data = {"branch": "master","content": content, "commit_message": commit_message}
         # print(data.encode())
         # files/<folder-name>%2F
@@ -59,7 +59,7 @@ def update(file):
         commit_message = "Updated on {}".format(ctime())
         print(content)
         print(content.encode())
-        headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+        headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
         data = {"branch": "master","content": content, "commit_message": commit_message}
         # print(data.encode())
         # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="PUT")
@@ -77,7 +77,7 @@ def delete(file):
     name = file.split('/')[-1]
     commit_message = "Deleted on {}".format(ctime())
     # data = '{"branch": "master", "commit_message": '+ commit_message +'}'
-    headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
     data = {"branch": "master", "commit_message": commit_message}
     # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
     # urlopen(a)
@@ -93,7 +93,7 @@ def delete(file):
 def download(file_source, file_destination_directory):
     # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers={"Private-Token": access_token}, method="GET")
     # u = urlopen(a)
-    headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
     r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers=headers)
     with open(file_destination_directory+file_source, 'wb+') as f:
         f.write(r.content)
