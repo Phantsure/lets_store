@@ -1,3 +1,4 @@
+import requests
 import sys
 from time import ctime
 from urllib.request import Request, urlopen
@@ -31,56 +32,77 @@ def main():
 # <:id> is project id, which can be found in the settings of your gitlab repo
 
 def upload(file):
-    with open(file, 'rb+') as f:
+    with open(file, encoding='utf-8', mode='r') as f:
         name = f.name.split('/')[-1]
-        print(type(name))
-        content = '"{}"'.format(f.read())
-        commit_message = '"Uploaded on {}"'.format(ctime())
+        print(name)
+        content = "{}".format(f.read())
+        commit_message = "Uploaded on {}".format(ctime())
         print(content)
         print(content.encode())
-        data = '{"branch": "master", "content": ' + content + ', "commit_message": '+ commit_message +'}'
-        print(data.encode())
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="POST")
-        urlopen(a)
-    print('uploaded')
+        headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+        data = {"branch": "master","content": content, "commit_message": commit_message}
+        # print(data.encode())
+        # files/<folder-name>%2F
+        r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
+
+    if r.status_code >= 400:
+        print("Error {}".format(r.status_code))
+    else:
+        print("Success with status code:{}".format(r.status_code))
     return
 
 def update(file):
-    with open(file, 'rb+') as f:
+    with open(file, encoding='utf-8', mode='r') as f:
         name = f.name.split('/')[-1]
-        print(type(name))
-        content = '"{}"'.format(f.read())
-        commit_message = '"Updated on {}"'.format(ctime())
+        print(name)
+        content = "{}".format(f.read())
+        commit_message = "Updated on {}".format(ctime())
         print(content)
         print(content.encode())
-        data = '{"branch": "master", "content": ' + content + ', "commit_message": '+ commit_message +'}'
-        print(data.encode())
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="PUT")
-        urlopen(a)
-    print("updated")
+        headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+        data = {"branch": "master","content": content, "commit_message": commit_message}
+        # print(data.encode())
+        # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="PUT")
+        # urlopen(a)
+        r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
+        print("updated")
+
+    if r.status_code >= 400:
+        print("Error {}".format(r.status_code))
+    else:
+        print("Success with status code:{}".format(r.status_code))
     return
 
 def delete(file):
-    try:
-        name = file.split('/')[-1]
-        commit_message = '"Deleted on {}"'.format(ctime())
-        data = '{"branch": "master", "commit_message": '+ commit_message +'}'
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
-        urlopen(a)
-        print("deleted")
-    except:
-        print("Error 404: no such file found")
+    name = file.split('/')[-1]
+    commit_message = "Deleted on {}".format(ctime())
+    # data = '{"branch": "master", "commit_message": '+ commit_message +'}'
+    headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+    data = {"branch": "master", "commit_message": commit_message}
+    # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
+    # urlopen(a)
+    r = requests.delete("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
+    print("deleted")
+    
+    if r.status_code >= 400:
+        print("Error {}".format(r.status_code))
+    else:
+        print("Success with status code:{}".format(r.status_code))
     return
 
 def download(file_source, file_destination_directory):
-    try:
-        a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers={"Private-Token": access_token}, method="GET")
-        u = urlopen(a)
-        with open(file_destination_directory+file_source, 'wb+') as f:
-            f.write(u.read())
-        print("downloaded")
-    except:
-        print("Error 404: no such file found or directory not found")
+    # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers={"Private-Token": access_token}, method="GET")
+    # u = urlopen(a)
+    headers = {'Private-Token': 'msjcvDgxRQUS1hK_zvaN', 'Content-Type': 'application/json'}
+    r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers=headers)
+    with open(file_destination_directory+file_source, 'wb+') as f:
+        f.write(r.content)
+    print("downloaded")
+    
+    if r.status_code >= 400:
+        print("Error {}".format(r.status_code))
+    else:
+        print("Success with status code:{}".format(r.status_code))
     return
 
 if __name__ == "__main__":
