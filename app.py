@@ -36,12 +36,12 @@ def upload(file):
     # with open(file, encoding='utf-8', mode='r') as f:
     with open(file, mode='rb+') as f:
         name = f.name.split('/')[-1]
-        print(name)
+        # print(name)
         # content = "{}".format(f.read())
         content = "{}".format(base64.b64encode(f.read()).decode())
         commit_message = "Uploaded on {}".format(ctime())
-        print(content)
-        print(content.encode())
+        # print(content)
+        # print(content.encode())
         headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
         data = {"branch": "master","content": content, "commit_message": commit_message}
         # print(data.encode())
@@ -58,11 +58,11 @@ def update(file):
     # with open(file, encoding='utf-8', mode='r') as f:
     with open(file, mode='rb+') as f:
         name = f.name.split('/')[-1]
-        print(name)
+        # print(name)
         content = "{}".format(base64.b64encode(f.read()).decode())
         commit_message = "Updated on {}".format(ctime())
-        print(content)
-        print(content.encode())
+        # print(content)
+        # print(content.encode())
         headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
         data = {"branch": "master","content": content, "commit_message": commit_message}
         # print(data.encode())
@@ -100,7 +100,7 @@ def download(file_source, file_destination_directory):
     headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
     r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers=headers)
     # print(r.content)
-    print(base64.b64decode(r.content.decode()))
+    # print(base64.b64decode(r.content.decode()))
     # print(base64.b64decode(r.content).encode())
     with open(file_destination_directory+file_source, 'wb+') as f:
         f.write(base64.b64decode(r.content))
