@@ -44,11 +44,11 @@ import os.path
 #     return os.listdir(directory)
 
 def upload(directory, files, level=1):
-    print(directory + '/' + files[0])
-    print(files)
+    # print(directory + '/' + files[0])
+    # print(files)
     for file in files:
         if os.path.isfile(directory + '/' + file):
-            print(2)
+            # print(2)
             # with open(file, encoding='utf-8', mode='r') as f:
             with open(directory + '/' + file, mode='rb+') as f:
                 name = f.name.split('/')[-level:]
@@ -76,11 +76,11 @@ def upload(directory, files, level=1):
     return
 
 def update(directory, files, level=1):
-    print(directory + '/' + files[0])
-    print(files)
+    # print(directory + '/' + files[0])
+    # print(files)
     for file in files:
         if os.path.isfile(directory + '/' + file):
-            print(2)
+            # print(2)
             # with open(file, encoding='utf-8', mode='r') as f:
             with open(directory + '/' + file, mode='rb+') as f:
                 name = f.name.split('/')[-level:]
