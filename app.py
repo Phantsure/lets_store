@@ -31,7 +31,7 @@ def main():
             delete('', [sys.argv[2]])
     elif sys.argv[1] == '--download':
         if l == 4:
-            download(sys.argv[2], sys.argv[3])
+            download([sys.argv[2]], sys.argv[3])
     elif sys.argv[1] == '--help':
         print('--upload <file-path>: to upload a file to cloud\n--update <file-path>: to update a file on cloud\n--delete <file-name>: to delete the existing file on server\n--download <file-name> <file-download-directory>: to download a file locally')
     else:
@@ -111,9 +111,9 @@ def delete(directory, files, level=1):
         headers = {'Private-Token': access_token}
         if directory != '':
             # print(directory[3:] + '%2F' + file)
-            r = requests.get("https://gitlab.com/api/v4/projects/12659010/repository/tree?path=" + directory[3:] + '%2F' + file, headers=headers)
+            r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/tree?path=" + directory[3:] + '%2F' + file, headers=headers)
         else:
-            r = requests.get("https://gitlab.com/api/v4/projects/12659010/repository/tree?path=" + file, headers=headers)
+            r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/tree?path=" + file, headers=headers)
         details = json.loads(r.content.decode())
         # print(details)
 
@@ -143,22 +143,41 @@ def delete(directory, files, level=1):
             delete(directory + '%2F' + file, f, level=level+1)
     return
 
-def download(file_source, file_destination_directory):
-    # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers={"Private-Token": access_token}, method="GET")
-    # u = urlopen(a)
-    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
-    r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file_source +"/raw?ref=master", headers=headers)
-    # print(r.content)
-    # print(base64.b64decode(r.content.decode()))
-    # print(base64.b64decode(r.content).encode())
-    with open(file_destination_directory+file_source, 'wb+') as f:
-        f.write(base64.b64decode(r.content))
-    print("downloaded")
-    
-    if r.status_code >= 400:
-        print("Error {}".format(r.status_code))
-    else:
-        print("Success with status code:{}".format(r.status_code))
+def download(files, file_destination_directory):
+    for file in files:
+        headers = {'Private-Token': access_token}
+        r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/tree?path=" + file, headers=headers)
+        details = json.loads(r.content.decode())
+
+        if len(details) == 0:
+            headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+            r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file +"/raw?ref=master", headers=headers)
+            # print(r.content)
+            dest = file_destination_directory+file
+            desti = dest.split('%2F')
+            while(len(desti) != 1):
+                desti[-2] = desti[-2] + '/' + desti[-1]
+                del(desti[-1])
+            
+            with open(desti[0], 'wb+') as f:
+                f.write(base64.b64decode(r.content))
+            # print("downloaded")
+            
+            if r.status_code >= 400:
+                print("Error {}".format(r.status_code))
+            else:
+                print("Success with status code:{}".format(r.status_code))
+        else:
+            dest = file_destination_directory+file
+            desti = dest.split('%2F')
+            while(len(desti) != 1):
+                desti[-2] = desti[-2] + '/' + desti[-1]
+                del(desti[-1])
+            os.mkdir(desti[0])
+            f = []
+            for d in details:
+                f.append(file + '%2F' + d['name'])
+            download(f, file_destination_directory)
     return
 
 if __name__ == "__main__":
