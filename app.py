@@ -40,7 +40,7 @@ def main():
 # https://gitlab.com/api/v4/projects/<:id>/repository/files/<filename-with-extension>
 # <:id> is project id, which can be found in the settings of your gitlab repo
 
-
+import mimetypes
 
 def upload(directory, files, level=1):
     # print(directory + '/' + files[0])
@@ -48,28 +48,64 @@ def upload(directory, files, level=1):
     for file in files:
         if os.path.isfile(directory + '/' + file):
             # print(2)
-            # with open(file, encoding='utf-8', mode='r') as f:
-            with open(directory + '/' + file, mode='rb+') as f:
-                name = f.name.split('/')[-level:]
-                while(len(name) != 1):
-                    name[-2] = name[-2] + '%2F' + name[-1]
-                    del(name[-1])
-                # print(name)
-                # content = "{}".format(f.read())
-                content = "{}".format(base64.b64encode(f.read()).decode())
-                commit_message = "Uploaded on {}".format(ctime())
-                # print(content)
-                # print(content.encode())
-                headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
-                data = {"branch": "master","content": content, "commit_message": commit_message}
-                # print(data.encode())
-                # files/<folder-name>%2F
-                r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
+            (ext,_) = mimetypes.guess_type(file)
+            e=2
+            if ext == None:
+                e=0
+            if e == 2:
+                if ext[:4] == 'text':
+                    e=1
+                else:
+                    e=0 
+            # e = 0 means not text file, e = 1 means text file
+            if e == 0:
+                # with open(file, encoding='utf-8', mode='r') as f:
+                with open(directory + '/' + file, mode='rb+') as f:
+                    name = f.name.split('/')[-level:]
+                    while(len(name) != 1):
+                        name[-2] = name[-2] + '%2F' + name[-1]
+                        del(name[-1])
+                    # print(name)
+                    # content = "{}".format(f.read())
+                    content = "{}".format(base64.b64encode(f.read()).decode())
+                    commit_message = "Uploaded on {}".format(ctime())
+                    # print(content)
+                    # print(content.encode())
+                    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+                    data = {"branch": "master","content": content, "commit_message": commit_message}
+                    # print(data.encode())
+                    # files/<folder-name>%2F
+                    r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
 
-            if r.status_code >= 400:
-                print("Error {}".format(r.status_code))
-            else:
-                print("Success with status code:{}".format(r.status_code))
+                if r.status_code >= 400:
+                    print("Error {}".format(r.status_code))
+                else:
+                    print("Success with status code:{}".format(r.status_code))
+
+            elif e == 1:
+                with open(directory + '/' + file, encoding='utf-8', mode='r') as f:
+                    name = f.name.split('/')[-level:]
+                    while(len(name) != 1):
+                        name[-2] = name[-2] + '%2F' + name[-1]
+                        del(name[-1])
+                    # print(name)
+                    content = "{}".format(f.read())
+                    # content = "{}".format(base64.b64encode(f.read()).decode())
+                    commit_message = "Uploaded on {}".format(ctime())
+                    # print(content)
+                    # print(content.encode())
+                    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+                    data = {"branch": "master","content": content, "commit_message": commit_message}
+                    # print(data.encode())
+                    # files/<folder-name>%2F
+                    r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
+
+                if r.status_code >= 400:
+                    print("Error {}".format(r.status_code))
+                else:
+                    print("Success with status code:{}".format(r.status_code))
+            
+        
         elif os.path.isdir(directory + '/' + file):
             upload(directory+'/'+file, os.listdir(directory + '/' + file), level=level+1)
     return
@@ -80,33 +116,70 @@ def update(directory, files, level=1):
     for file in files:
         if os.path.isfile(directory + '/' + file):
             # print(2)
-            # with open(file, encoding='utf-8', mode='r') as f:
-            with open(directory + '/' + file, mode='rb+') as f:
-                name = f.name.split('/')[-level:]
-                while(len(name) != 1):
-                    name[-2] = name[-2] + '%2F' + name[-1]
-                    del(name[-1])
-                # print(name)
-                # content = "{}".format(f.read())
-                content = "{}".format(base64.b64encode(f.read()).decode())
-                commit_message = "Updated on {}".format(ctime())
-                # print(content)
-                # print(content.encode())
-                headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
-                data = {"branch": "master","content": content, "commit_message": commit_message}
-                # print(data.encode())
-                # files/<folder-name>%2F
-                r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
+            (ext,_) = mimetypes.guess_type(file)
+            e=2
+            if ext == None:
+                e=0
+            if e == 2:
+                if ext[:4] == 'text':
+                    e=1
+                else:
+                    e=0 
+            # e = 0 means not text file, e = 1 means text file
+            if e == 0:
+                # with open(file, encoding='utf-8', mode='r') as f:
+                with open(directory + '/' + file, mode='rb+') as f:
+                    name = f.name.split('/')[-level:]
+                    while(len(name) != 1):
+                        name[-2] = name[-2] + '%2F' + name[-1]
+                        del(name[-1])
+                    # print(name)
+                    # content = "{}".format(f.read())
+                    content = "{}".format(base64.b64encode(f.read()).decode())
+                    commit_message = "Updated on {}".format(ctime())
+                    # print(content)
+                    # print(content.encode())
+                    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+                    data = {"branch": "master","content": content, "commit_message": commit_message}
+                    # print(data.encode())
+                    # files/<folder-name>%2F
+                    r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
 
-            if r.status_code >= 400:
-                print("Error {}".format(r.status_code))
-            else:
-                print("Success with status code:{}".format(r.status_code))
+                if r.status_code >= 400:
+                    print("Error {}".format(r.status_code))
+                else:
+                    print("Success with status code:{}".format(r.status_code))
+
+            elif e == 1:
+                with open(directory + '/' + file, encoding='utf-8', mode='r') as f:
+                # with open(directory + '/' + file, mode='rb+') as f:
+                    name = f.name.split('/')[-level:]
+                    while(len(name) != 1):
+                        name[-2] = name[-2] + '%2F' + name[-1]
+                        del(name[-1])
+                    # print(name)
+                    content = "{}".format(f.read())
+                    # content = "{}".format(base64.b64encode(f.read()).decode())
+                    commit_message = "Updated on {}".format(ctime())
+                    # print(content)
+                    # print(content.encode())
+                    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+                    data = {"branch": "master","content": content, "commit_message": commit_message}
+                    # print(data.encode())
+                    # files/<folder-name>%2F
+                    r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], headers=headers, json=data)
+
+                if r.status_code >= 400:
+                    print("Error {}".format(r.status_code))
+                else:
+                    print("Success with status code:{}".format(r.status_code))
+
+
         elif os.path.isdir(directory + '/' + file):
             update(directory+'/'+file, os.listdir(directory + '/' + file), level=level+1)
     return
 
-def delete(directory, files, level=1):
+def delete(directory, files):
     for file in files:
         headers = {'Private-Token': access_token}
         if directory != '':
@@ -140,7 +213,7 @@ def delete(directory, files, level=1):
             f = []
             for d in details:
                 f.append(d['name'])
-            delete(directory + '%2F' + file, f, level=level+1)
+            delete(directory + '%2F' + file, f)
     return
 
 def download(files, file_destination_directory):
@@ -148,8 +221,18 @@ def download(files, file_destination_directory):
         headers = {'Private-Token': access_token}
         r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/tree?path=" + file, headers=headers)
         details = json.loads(r.content.decode())
-
+        
+        (ext,_) = mimetypes.guess_type(file)
         if len(details) == 0:
+            e=2
+            if ext == None:
+                e=0
+            if e == 2:
+                if ext[:4] == 'text':
+                    e=1
+                else:
+                    e=0 
+            
             headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
             r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/"+ file +"/raw?ref=master", headers=headers)
             # print(r.content)
@@ -159,14 +242,21 @@ def download(files, file_destination_directory):
                 desti[-2] = desti[-2] + '/' + desti[-1]
                 del(desti[-1])
             
-            with open(desti[0], 'wb+') as f:
-                f.write(base64.b64decode(r.content))
-            # print("downloaded")
-            
+            # e = 0 means not text file, e = 1 means text file
+            if e == 0:
+                with open(desti[0], 'wb+') as f:
+                    f.write(base64.b64decode(r.content))
+                # print("downloaded")
+            elif e == 1:
+                with open(desti[0], encoding='utf-8', mode='w') as f:
+                    f.write(r.content.decode())
+
             if r.status_code >= 400:
                 print("Error {}".format(r.status_code))
             else:
                 print("Success with status code:{}".format(r.status_code))
+
+
         else:
             dest = file_destination_directory+file
             desti = dest.split('%2F')
