@@ -1,6 +1,9 @@
 import requests
 import base64
 import sys
+import os
+import os.path
+import json
 from time import ctime
 from urllib.request import Request, urlopen
 
@@ -25,7 +28,7 @@ def main():
             update(sys.argv[2][:-(len(f[0]) + 1)], f)
     elif sys.argv[1] == '--delete':
         if l == 3:
-            delete(sys.argv[2])
+            delete('', [sys.argv[2]])
     elif sys.argv[1] == '--download':
         if l == 4:
             download(sys.argv[2], sys.argv[3])
@@ -37,11 +40,7 @@ def main():
 # https://gitlab.com/api/v4/projects/<:id>/repository/files/<filename-with-extension>
 # <:id> is project id, which can be found in the settings of your gitlab repo
 
-import os
-import os.path
 
-# def list_files_from_directory(directory):
-#     return os.listdir(directory)
 
 def upload(directory, files, level=1):
     # print(directory + '/' + files[0])
@@ -107,21 +106,41 @@ def update(directory, files, level=1):
             update(directory+'/'+file, os.listdir(directory + '/' + file), level=level+1)
     return
 
-def delete(file):
-    name = file.split('/')[-1]
-    commit_message = "Deleted on {}".format(ctime())
-    # data = '{"branch": "master", "commit_message": '+ commit_message +'}'
-    headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
-    data = {"branch": "master", "commit_message": commit_message}
-    # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
-    # urlopen(a)
-    r = requests.delete("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
-    print("deleted")
-    
-    if r.status_code >= 400:
-        print("Error {}".format(r.status_code))
-    else:
-        print("Success with status code:{}".format(r.status_code))
+def delete(directory, files, level=1):
+    for file in files:
+        headers = {'Private-Token': access_token}
+        if directory != '':
+            # print(directory[3:] + '%2F' + file)
+            r = requests.get("https://gitlab.com/api/v4/projects/12659010/repository/tree?path=" + directory[3:] + '%2F' + file, headers=headers)
+        else:
+            r = requests.get("https://gitlab.com/api/v4/projects/12659010/repository/tree?path=" + file, headers=headers)
+        details = json.loads(r.content.decode())
+        # print(details)
+
+        if len(details) == 0:
+            if directory != '':
+                name = directory + '%2F' + file
+            else:
+                name = '%2F' + file
+            commit_message = "Deleted on {}".format(ctime())
+            # data = '{"branch": "master", "commit_message": '+ commit_message +'}'
+            headers = {'Private-Token': access_token, 'Content-Type': 'application/json'}
+            data = {"branch": "master", "commit_message": commit_message}
+            # a = Request("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, data=data.encode(), headers={"Private-Token": access_token, "Content-Type": "application/json"}, method="DELETE")
+            # urlopen(a)
+            # print(name)
+            r = requests.delete("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[3:], headers=headers, json=data)
+            # print("deleted")
+            
+            if r.status_code >= 400:
+                print("Error {}".format(r.status_code))
+            else:
+                print("Success with status code:{}".format(r.status_code))
+        else:
+            f = []
+            for d in details:
+                f.append(d['name'])
+            delete(directory + '%2F' + file, f, level=level+1)
     return
 
 def download(file_source, file_destination_directory):
