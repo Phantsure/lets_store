@@ -22,12 +22,15 @@
             width: 22rem;
             margin: 1rem;
         }
+        .commit{
+            color: gray;
+        }
     </style>
 </head>
     
 <body>
     <div class="mdc-card card">
-        {{ filename }}<br>
+        {{ filename }}:<div class="commit">{{ commit_message }}</div><br>
         <!-- <button name="deleteButton" value=1 type="submit" class="mdc-button base-size"> -->
             <a class="mdc-button" href="{% url 'storer:delete' filename %}">DELETE</a>
         <!-- </button> -->

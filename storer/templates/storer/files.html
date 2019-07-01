@@ -12,20 +12,22 @@
             padding: 18rem 46rem 18rem 45rem;
             background-color: #F0F2FF;
         }
-        .commit{
+        /* .commit{
             color: gray;
-        }
+        } */
     </style>
 </head>
 
 <body>
     <div class="mdc-card card">
         <ul class="mdc-list">
-            <li class="mdc-list-item">File Name : <div class="commit">Commit Message</div></li>
+            <li class="mdc-list-item">File Names</li>
             {% load index %}
             {% for i in number_of_files %}
             <a href="{% url 'storer:details' file_names|index:i %}" class="mdc-list-item">
-                <li>{{ file_names|index:i }} : <div class="commit">{{ commit_messages|index:i }}</div></li>
+                <li>{{ file_names|index:i }} 
+                    
+                </li>
             </a>
             {% endfor %}
         </ul>
