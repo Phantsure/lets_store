@@ -1,11 +1,11 @@
 # sql databases
 db.sqlite3
 
-# uploaded files
-storer/upload/*
-
 # access_key
 storer/secret.py
+
+# uploaded file
+storer/upload/file
 
 # pyc files
 __pycache__/
