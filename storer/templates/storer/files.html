@@ -26,7 +26,8 @@
         }
         .name{
             float: left;
-            width: 77%
+            width: 77%;
+            height: 5%;
         }
         .top-btn{
             height: 50%;
@@ -44,12 +45,19 @@
             opacity: 0.95;
             float: left;
         }
+        .del-pop{
+            float: left;
+            /* padding: 5% 0% 0% 2%; */
+            margin: 600px 0% 0% 2%;
+            /* height: 5%; */
+            /* width: 13% ; */
+            height: 10%;
+        }
     </style>
 </head>
 {% load static %}
 <body background="{% static 'storer/backgroud.jpg' %}" class="image">
-    
-    <!-- <img src="{% static 'storer/backgroud.jpg' %}" class="image"> -->
+
     <div class="shadow-lg p-3 mb-5 bg-white rounded top-card">
         <img src="{% static 'storer/logo.jpg' %}" class="logo">
         <img src="{% static 'storer/logoname.png' %}" class="logo">
@@ -58,19 +66,29 @@
             <a class="btn btn-primary" href="{% url 'storer:update' %}">UPDATE</a>
         </div>
     </div>
-    <div class="shadow-lg p-3 mb-5 bg-white rounded card">
-        <ul class="list-group" >
-            <li class="list-group-item list-group-item-action active list-group-item-dark">File Names</li>
-            {% load index %}
-            {% for i in number_of_files %}
-                <li class="list-group-item list-group-item-action">
-                    <a href="{% url 'storer:details' file_names|index:i %}" class="list-group-item-action name">
-                        {{ file_names|index:i }}
-                    </a>
-                    <a class="btn btn-light" href="{% url 'storer:delete' file_names|index:i %}">DELETE</a>
-                    <a class="btn btn-light" href="{% url 'storer:download' file_names|index:i %}">DOWNLOAD</a>
-                </li>
-            {% endfor %}
-        </ul>
+
+    <div>
+        <div class="alert alert-dark alert-dismissible fade show del-pop" role="alert" {{ hidden_prop }}>
+            <strong>{{ status }}!</strong> File used:{{ file }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="shadow-lg p-3 mb-5 bg-white rounded card">
+            <ul class="list-group" >
+                <li class="list-group-item list-group-item-action active list-group-item-dark">File Names</li>
+                {% load index %}
+                {% for i in number_of_files %}
+                    <li class="list-group-item list-group-item-action">
+                        <a href="{% url 'storer:details' file_names|index:i %}" class="list-group-item-action name">
+                            {{ file_names|index:i }}
+                        </a>
+                        <a class="btn btn-light" href="{% url 'storer:delete' file_names|index:i %}">DELETE</a>
+                        <a class="btn btn-light" href="{% url 'storer:download' file_names|index:i %}">DOWNLOAD</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </body>

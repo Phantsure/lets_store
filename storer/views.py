@@ -54,9 +54,9 @@ def upload(request):
                 # print(data.encode())
                 r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
             if r.status_code >= 400:
-                return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+                return render(request, 'storer/upload.html', {'success_danger':'danger', 'status':"Error {}".format(r.status_code), 'hidden_prop': '', 'filename': name})
             else:
-                return render(request, 'storer/status_upd.html', {'text':'Uploaded'})
+                return render(request, 'storer/upload.html', {'success_danger':'success', 'status':'Uploaded', 'hidden_prop': '', 'filename': name})
         elif e == 1:
             with open('storer/upload/file', 'rb+') as f:
                 content = "{}".format(f.read().decode())
@@ -68,13 +68,13 @@ def upload(request):
                 # print(data.encode())
                 r = requests.post("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
             if r.status_code >= 400:
-                return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+                return render(request, 'storer/upload.html', {'success_danger':'danger', 'status':"Error {}".format(r.status_code), 'hidden_prop': '', 'filename': name})
             else:
-                return render(request, 'storer/status_upd.html', {'text':'Uploaded'})
+                return render(request, 'storer/upload.html', {'success_danger':'success', 'status':'Uploaded', 'hidden_prop': '', 'filename': name})
 
 
     else:
-        return render(request, 'storer/upload.html')
+        return render(request, 'storer/upload.html', {'success_danger':'', 'status':'', 'hidden_prop': 'hidden', 'filename': ''})
 
 
 def update(request):
@@ -104,9 +104,9 @@ def update(request):
                 # print(data.encode())
                 r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
             if r.status_code >= 400:
-                return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+                return render(request, 'storer/upload.html', {'success_danger':'danger', 'status':"Error {}".format(r.status_code), 'hidden_prop': '', 'filename': name})
             else:
-                return render(request, 'storer/status_upd.html', {'text':'Updated'})
+                return render(request, 'storer/upload.html', {'success_danger':'success', 'status':"Updated", 'hidden_prop': '', 'filename': name})
         elif e == 1:
             with open('storer/upload/file', 'rb+') as f:
                 content = "{}".format(f.read().decode())
@@ -118,16 +118,16 @@ def update(request):
                 # print(data.encode())
                 r = requests.put("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name, headers=headers, json=data)
             if r.status_code >= 400:
-                return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+                return render(request, 'storer/upload.html', {'success_danger':'danger', 'status':"Error {}".format(r.status_code), 'hidden_prop': '', 'filename': name})
             else:
-                return render(request, 'storer/status_upd.html', {'text':'Updated'})
+                return render(request, 'storer/upload.html', {'success_danger':'success', 'status':"Updated", 'hidden_prop': '', 'filename': name})
 
 
     else:
-        return render(request, 'storer/upload.html')
+        return render(request, 'storer/upload.html', {'success_danger': 'danger', 'status':'test', 'hidden_prop': '', 'filename': 'test'})
 
 
-def files(request, filename=''):
+def files(request, filename='', del_params={'hidden_prop': 'hidden', 'status': '', 'file':''}):
     headers={"Private-Token": access_token}
     if filename != '':
         r = requests.get("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/tree?path=" + filename, headers=headers)
@@ -159,7 +159,9 @@ def files(request, filename=''):
     # print(commit_messages)
     number_of_files = range(len(file_names))
     # (name,_) = file_names
-    return render(request, 'storer/files.html', {'file_names':file_names, 'number_of_files':number_of_files})
+    j = {'file_names':file_names, 'number_of_files':number_of_files}
+    j.update(del_params)
+    return render(request, 'storer/files.html', j)
 
 def file_details(request, filename):
     headers={"Private-Token": access_token}
@@ -193,9 +195,11 @@ def delete(request, filename):
         del(name[-1])
     r = requests.delete("https://gitlab.com/api/v4/projects/"+ project_id +"/repository/files/" + name[0], json=data, headers=headers)
     if r.status_code >= 400:
-        return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+        # return render(request, 'storer/status_upd.html', {'text':"Error {}".format(r.status_code)})
+        return files(request, filename='', del_params={'hidden_prop': '', 'status': "Error {}".format(r.status_code), 'file':name[0]})
     else:
-        return render(request, 'storer/status_upd.html', {'text':'Deleted'})
+        # return render(request, 'storer/status_upd.html', {'text':'Deleted'})
+        return files(request, filename='', del_params={'hidden_prop': '', 'status': "Deleted", 'file':name[0]})
 
 def download(request, filename):
     headers={"Private-Token": access_token}
