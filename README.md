@@ -15,3 +15,8 @@ This will start the localhost(127.0.0.1:8000)
 sudo systemctl enable backup.service
 sudo systemctl start backup.service
 ```
+
+## To run app.py:
+```
+python3 app.py
+```
